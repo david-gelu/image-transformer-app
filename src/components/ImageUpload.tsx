@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Upload, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from './ui/card';
 import { Progress } from "@/components/ui/progress";
 import { Button } from './ui/button';
@@ -38,13 +39,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     };
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
-            const file = event.target.files[0];
-            if (validateFile(file)) {
+        const file = event.target.files?.[0];
+        if (file) {
+            try {
+                setError('');
                 setIsLoading(true);
-                setSelectedFile(file);
-                await onImageSelect(file);
+                if (validateFile(file)) {
+                    setSelectedFile(file);
+                    await onImageSelect(file);
+                }
+            } catch (error) {
+                setError('Failed to process image');
+                console.error('Error processing image:', error);
+            } finally {
                 setIsLoading(false);
+                // Reset the input value to allow selecting the same file again
+                event.target.value = '';
             }
         }
     };
@@ -66,10 +76,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];
-            if (validateFile(file)) {
+            try {
+                setError('');
                 setIsLoading(true);
-                setSelectedFile(file);
-                await onImageSelect(file);
+                if (validateFile(file)) {
+                    setSelectedFile(file);
+                    await onImageSelect(file);
+                }
+            } catch (error) {
+                setError('Failed to process image');
+                console.error('Error processing image:', error);
+            } finally {
                 setIsLoading(false);
             }
         }
@@ -85,13 +102,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     };
 
     const handleZoneClick = () => {
-        fileInputRef.current?.click();
+        if (!isLoading) {
+            // Clear the input value before clicking to ensure change event fires
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+            fileInputRef.current?.click();
+        }
     };
 
+    // Update renderContent to always allow clicks
     const renderContent = () => {
         if (isLoading) {
             return (
-                <div className="upload-zone__content">
+                <MotionContent
+                    className="upload-zone__content"
+                    variants={contentVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                >
                     <Upload className="upload-zone__icon" />
                     <h3 className="upload-zone__title">Processing image...</h3>
                     <div className="upload-zone__progress">
@@ -101,36 +131,68 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             className="upload-zone__progress-bar"
                         />
                     </div>
-                </div>
+                </MotionContent>
             );
         }
 
-        if (selectedFile && !error) {
-            return (
-                <div className="upload-zone__content">
-                    <Upload className="upload-zone__icon" />
-                    <h3 className="upload-zone__title">Upload complete!</h3>
-                    <p className="upload-zone__text">
-                        {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                    </p>
-                    <Progress
-                        value={100}
-                        className="upload-zone__progress-bar"
-                    />
-                </div>
-            );
-        }
-
+        // Even when file is selected, allow clicking for new upload
         return (
-            <div className="upload-zone__content" onClick={handleZoneClick}>
-                <Upload className="upload-zone__icon" />
-                <h3 className="upload-zone__title">Drag & drop files here</h3>
-                <p className="upload-zone__text">
-                    Or click to browse (max 2 files, up to 5MB each)
-                </p>
-            </div>
+            <MotionContent
+                className="upload-zone__content"
+                onClick={handleZoneClick}
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+            >
+                {selectedFile && !error ? (
+                    <>
+                        <Upload className="upload-zone__icon" />
+                        <h3 className="upload-zone__title">Upload complete!</h3>
+                        <p className="upload-zone__text">
+                            {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </p>
+                        <p className="upload-zone__text">
+                            Click or drop to replace
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <Upload className="upload-zone__icon" />
+                        <h3 className="upload-zone__title">Drag & drop files here</h3>
+                        <p className="upload-zone__text">
+                            Or click to browse
+                        </p>
+                    </>
+                )}
+            </MotionContent>
         );
     };
+
+    const contentVariants = {
+        hidden: {
+            opacity: 0,
+            y: -20
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.3,
+                ease: "easeOut"
+            }
+        },
+        exit: {
+            opacity: 0,
+            y: 20,
+            transition: {
+                duration: 0.2,
+                ease: "easeIn"
+            }
+        }
+    };
+
+    const MotionContent = motion.div;
 
     return (
         <Card className="upload">
@@ -165,7 +227,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                 >
-                    {renderContent()}
+                    <AnimatePresence mode="wait">
+                        {renderContent()}
+                    </AnimatePresence>
                 </div>
             </CardContent>
         </Card>

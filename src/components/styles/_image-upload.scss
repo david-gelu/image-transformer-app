@@ -49,13 +49,13 @@
   justify-content: center;
 
   &:hover {
-    border-color: var(--bg-color);
+    border-color: var(--link-color-accent);
     background-color: var(--bg-color-accent);
   }
 
   &--active {
     border-color: var(--bg-color);
-    background-color: var(--bg-color-accent);
+    background-color: var(--link-color-accent);
   }
 
   position: relative;
@@ -77,6 +77,7 @@
     align-items: center;
     text-align: center;
     padding: 2rem;
+    width: 100%;
   }
 
   &__icon {
