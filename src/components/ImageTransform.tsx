@@ -1,9 +1,9 @@
-import React from 'react';
-import { Button } from "@/components/ui/button";
+import React from 'react'
+import { Button } from "@/components/ui/button"
 
 interface ImageTransformProps {
-    transformedImage: string | null;
-    onDownload: () => void;
+    transformedImage: string | null
+    onDownload: () => void
 }
 
 const ImageTransform: React.FC<ImageTransformProps> = ({ transformedImage, onDownload }) => {
@@ -29,7 +29,7 @@ const ImageTransform: React.FC<ImageTransformProps> = ({ transformedImage, onDow
                 </p>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default ImageTransform;
+export default ImageTransform

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 
 export const BallLoader = () => {
   return (
@@ -20,5 +20,5 @@ export const BallLoader = () => {
         />
       ))}
     </div>
-  );
-};
+  )
+}

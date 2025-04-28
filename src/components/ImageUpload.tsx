@@ -1,15 +1,15 @@
-import React, { useRef } from 'react';
-import { Upload, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent } from './ui/card';
-import { Progress } from "@/components/ui/progress";
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import React, { useRef } from 'react'
+import { Upload, X } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Card, CardContent } from './ui/card'
+import { Progress } from "@/components/ui/progress"
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
 interface ImageUploadProps {
-    onImageSelect: (file: File) => Promise<void>;
-    onClose?: () => void;
-    acceptedFormats?: string[];
+    onImageSelect: (file: File) => Promise<void>
+    onClose?: () => void
+    acceptedFormats?: string[]
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -17,99 +17,99 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     onClose,
     acceptedFormats = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
 }) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
-    const [dragActive, setDragActive] = React.useState<boolean>(false);
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [error, setError] = React.useState<string>('');
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
+    const [dragActive, setDragActive] = React.useState<boolean>(false)
+    const [isLoading, setIsLoading] = React.useState<boolean>(false)
+    const [error, setError] = React.useState<string>('')
 
     const validateFile = (file: File): boolean => {
-        const fileType = file.type.split('/')[1];
+        const fileType = file.type.split('/')[1]
         const isValidType = acceptedFormats.some(format =>
             format.toLowerCase().includes(fileType.toLowerCase())
-        );
+        )
 
         if (!isValidType) {
-            setError(`Invalid file type. Accepted formats: ${acceptedFormats.join(', ')}`);
-            return false;
+            setError(`Invalid file type. Accepted formats: ${acceptedFormats.join(', ')}`)
+            return false
         }
 
-        setError('');
-        return true;
-    };
+        setError('')
+        return true
+    }
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+        const file = event.target.files?.[0]
         if (file) {
             try {
-                setError('');
-                setIsLoading(true);
+                setError('')
+                setIsLoading(true)
                 if (validateFile(file)) {
-                    setSelectedFile(file);
-                    await onImageSelect(file);
+                    setSelectedFile(file)
+                    await onImageSelect(file)
                 }
             } catch (error) {
-                setError('Failed to process image');
-                console.error('Error processing image:', error);
+                setError('Failed to process image')
+                console.error('Error processing image:', error)
             } finally {
-                setIsLoading(false);
+                setIsLoading(false)
                 // Reset the input value to allow selecting the same file again
-                event.target.value = '';
+                event.target.value = ''
             }
         }
-    };
+    }
 
     const handleDrag = (e: React.DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
         if (e.type === "dragenter" || e.type === "dragover") {
-            setDragActive(true);
+            setDragActive(true)
         } else if (e.type === "dragleave") {
-            setDragActive(false);
+            setDragActive(false)
         }
-    };
+    }
 
     const handleDrop = async (e: React.DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setDragActive(false);
+        e.preventDefault()
+        e.stopPropagation()
+        setDragActive(false)
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            const file = e.dataTransfer.files[0];
+            const file = e.dataTransfer.files[0]
             try {
-                setError('');
-                setIsLoading(true);
+                setError('')
+                setIsLoading(true)
                 if (validateFile(file)) {
-                    setSelectedFile(file);
-                    await onImageSelect(file);
+                    setSelectedFile(file)
+                    await onImageSelect(file)
                 }
             } catch (error) {
-                setError('Failed to process image');
-                console.error('Error processing image:', error);
+                setError('Failed to process image')
+                console.error('Error processing image:', error)
             } finally {
-                setIsLoading(false);
+                setIsLoading(false)
             }
         }
-    };
+    }
 
     const handleCloseClick = () => {
         if (fileInputRef.current) {
-            fileInputRef.current.value = '';
+            fileInputRef.current.value = ''
         }
-        setSelectedFile(null);
-        setError('');
-        onClose?.();
-    };
+        setSelectedFile(null)
+        setError('')
+        onClose?.()
+    }
 
     const handleZoneClick = () => {
         if (!isLoading) {
             // Clear the input value before clicking to ensure change event fires
             if (fileInputRef.current) {
-                fileInputRef.current.value = '';
+                fileInputRef.current.value = ''
             }
-            fileInputRef.current?.click();
+            fileInputRef.current?.click()
         }
-    };
+    }
 
     // Update renderContent to always allow clicks
     const renderContent = () => {
@@ -132,7 +132,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                         />
                     </div>
                 </MotionContent>
-            );
+            )
         }
 
         // Even when file is selected, allow clicking for new upload
@@ -166,8 +166,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     </>
                 )}
             </MotionContent>
-        );
-    };
+        )
+    }
 
     const contentVariants = {
         hidden: {
@@ -190,9 +190,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 ease: "easeIn"
             }
         }
-    };
+    }
 
-    const MotionContent = motion.div;
+    const MotionContent = motion.div
 
     return (
         <Card className="upload">
@@ -233,7 +233,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 </div>
             </CardContent>
         </Card>
-    );
-};
+    )
+}
 
-export default ImageUpload;
+export default ImageUpload
