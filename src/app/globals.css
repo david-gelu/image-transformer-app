@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #ffffff;
+  --second-color: #fafafa;
+  --text-color: #242424;
+  --link-color: #3c455c;
+  --nav-color: var(--text-color);
+  --nav-bg: #242424;
+  --key-color: #242424;
+  --property-color: #064664;
+  --theme-name-color: var(--text-color);
+  --button-color: var(--text-color);
+  --bg-color: #ebe6da;
+  --bg-color-accent: #e8e2d4;
+  --link-color-accent: rgb(55.9736842105, 64.3697368421, 85.8263157895);
+  --text-with-transparency: rgba(36, 36, 36, 0.3);
+  --success: #008533;
+  --danger: #c23854;
+  --warning: #ffce52;
+}
+
+[data-theme="dark"] {
+  --primary-color: #222;
+  --second-color: #2a2a2a;
+  --text-color: #dcebf1;
+  --link-color: #02fd9d;
+  --nav-color: #87aec0;
+  --nav-bg: transparent;
+  --key-color: #87aec0;
+  --theme-name-color: var(--text-color);
+  --property-color: #cce6f1;
+  --bg-color: #001e2b;
+  --bg-color-accent: #00212f;
+  --link-color-accent: rgb(0.8, 101.2, 62.8);
+  --button-color: var(--text-color);
+  --text-with-transparency: rgba(220, 235, 241, 0.3);
+}
+
+@layer base {
+  html {
+    @apply transition-colors duration-500;
+  }
+  body {
+    @apply antialiased transition-opacity duration-500;
+  }
+}
