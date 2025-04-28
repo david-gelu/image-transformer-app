@@ -1,35 +1,32 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
-import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/theme-toggle'
+import '../components/styles/main.scss';
+import { Inter } from 'next/font/google';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeToggle } from '@/components/theme-toggle';
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata = {
-    title: 'Image Transformer App',
-    description: 'Transform your images between different formats',
-}
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode;
 }) {
-    return (
-        <html lang="en" suppressHydrationWarning>
-            <body className={`${inter.className} antialiased`}>
-                <ThemeProvider>
-                    <div className=" bg-background">
-                        <header className="container mx-auto p-4 flex justify-between items-center bg-nav-bg">
-                            <h1 className="text-2xl font-bold text-text">Image Transformer</h1>
-                            <ThemeToggle />
-                        </header>
-                        <main className="container mx-auto p-4">
-                            {children}
-                        </main>
-                    </div>
-                </ThemeProvider>
-            </body>
-        </html>
-    )
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <ThemeProvider>
+          <header className="header">
+            <div className="container">
+              <div className="header__content">
+                <h1>Image Transformer</h1>
+                <ThemeToggle />
+              </div>
+            </div>
+          </header>
+          <main className="container">
+            {children}
+          </main>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }

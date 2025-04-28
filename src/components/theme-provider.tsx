@@ -4,18 +4,17 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 
 type Theme = "light" | "dark"
 
+interface ThemeContextType {
+  theme: Theme
+  setTheme: (theme: Theme) => void
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+
 interface ThemeProviderProps {
   children: React.ReactNode
   defaultTheme?: Theme
 }
-
-const ThemeContext = createContext<{
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}>({
-  theme: "light",
-  setTheme: () => { },
-})
 
 export function ThemeProvider({
   children,
@@ -24,11 +23,12 @@ export function ThemeProvider({
   const [theme, setThemeState] = useState<Theme>(defaultTheme)
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem("theme") : null
-    const initial = stored === "light" || stored === "dark" ? stored : defaultTheme
-    setThemeState(initial)
-    document.documentElement.setAttribute("data-theme", initial)
-  }, [defaultTheme])
+    const stored = localStorage.getItem("theme") as Theme | null
+    if (stored) {
+      setThemeState(stored)
+      document.documentElement.setAttribute("data-theme", stored)
+    }
+  }, [])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
@@ -43,6 +43,10 @@ export function ThemeProvider({
   )
 }
 
-export function useTheme() {
-  return useContext(ThemeContext)
+export function useTheme(): ThemeContextType {
+  const context = useContext(ThemeContext)
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider")
+  }
+  return context
 }
