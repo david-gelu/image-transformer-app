@@ -9,9 +9,6 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    scroll-behavior: smooth;
-    overflow-y: auto;
-    max-height: calc(100vh - 4rem);
 
     @media (min-width: 640px) {
       padding: 2rem;
