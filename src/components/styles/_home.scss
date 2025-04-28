@@ -3,16 +3,11 @@
   overflow-x: hidden;
 
   &__container {
-    max-width: 64rem;
     margin: 0 auto;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-
-    @media (min-width: 640px) {
-      padding: 2rem;
-    }
+    padding: 1rem;
   }
 
   &__options {

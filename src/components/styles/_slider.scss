@@ -16,23 +16,25 @@
     border-radius: 9999px;
     background-color: var(--bg-color);
     border: 1px solid var(--link-color-accent);
+    cursor: pointer;
   }
 
   &__range {
     position: absolute;
     height: 100%;
-    background-color: var(--bg-color-accent);
+    background-color: var(--link-color-accent);
   }
 
   &__thumb {
     display: block;
-    height: 1rem;
-    width: 1rem;
+    height: 1.3rem;
+    width: 1.3rem;
     border-radius: 50%;
-    border: 1px solid var(--link-color);
+    border: 15px solid var(--link-color);
     background-color: var(--link-color-accent);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: border-color 0.2s;
+    cursor: pointer;
 
     &:focus-visible {
       outline: none;
