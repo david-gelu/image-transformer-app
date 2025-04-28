@@ -1,0 +1,115 @@
+.upload {
+  background: white;
+  border-radius: 0.75rem;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.5rem 0.75rem;
+
+    &__title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    &__close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.375rem;
+      border: none;
+      background: transparent;
+      color: var(--muted-foreground);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--accent);
+      }
+    }
+  }
+
+  &-subtitle {
+    padding: 0 1.5rem 1.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+}
+
+.upload-zone {
+  position: relative;
+  margin: 0 1.5rem 1.5rem;
+  min-height: 200px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 0.5rem;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: var(--primary);
+    background-color: #f1f5f9;
+  }
+
+  &--active {
+    border-color: var(--primary);
+    background-color: #f1f5f9;
+  }
+
+  &__input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  &__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+  }
+
+  &__text {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 1.25rem;
+  }
+
+  &__browse {
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
+  }
+}

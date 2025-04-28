@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { UploadCloud } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Input } from './ui/input';
+import React, { useRef } from 'react';
+import { Upload, X } from "lucide-react";
+import { Card, CardContent } from './ui/card';
 
 interface ImageUploadProps {
-    onImageSelect: (file: File) => void;
+    onImageSelect: (file: File) => Promise<void>;
+    onClose?: () => void;
     acceptedFormats?: string[];
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
     onImageSelect,
+    onClose,
     acceptedFormats = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
 }) => {
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [dragActive, setDragActive] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+    const [dragActive, setDragActive] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string>('');
 
     const validateFile = (file: File): boolean => {
         const fileType = file.type.split('/')[1];
@@ -56,90 +56,79 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         }
     };
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = async (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];
-            setSelectedFile(file);
-            onImageSelect(file);
+            if (validateFile(file)) {
+                setIsLoading(true);
+                setSelectedFile(file);
+                await onImageSelect(file);
+                setIsLoading(false);
+            }
         }
     };
 
+    const handleCloseClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+        setSelectedFile(null);
+        setError('');
+        onClose?.();
+    };
+
+    const handleZoneClick = () => {
+        fileInputRef.current?.click();
+    };
+
     return (
-        <Card className="w-full">
-            <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl">Upload Image</CardTitle>
-            </CardHeader>
-            <CardContent>
+        <Card className="upload">
+            <div className="upload-header">
+                <h2 className="upload-header__title">Basic</h2>
+                <button
+                    className="upload-header__close"
+                    onClick={handleCloseClick}
+                    type="button"
+                    aria-label="Close upload"
+                >
+                    <X size={20} />
+                </button>
+            </div>
+            <p className="upload-subtitle">
+                Basic controlled file upload.
+            </p>
+            <CardContent className="p-0">
                 <div
-                    className={cn(
-                        "relative border-2 border-dashed rounded-lg p-8 text-center",
-                        dragActive
-                            ? "border-primary bg-primary/5 dark:bg-primary/10"
-                            : error
-                                ? "border-destructive"
-                                : "border-muted hover:border-primary",
-                        "transition-all duration-150 ease-in-out"
-                    )}
+                    className={`upload-zone ${dragActive ? 'upload-zone--active' :
+                        error ? 'upload-zone--error' : ''
+                        }`}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                 >
-                    <Input
+                    <input
+                        ref={fileInputRef}
                         type="file"
                         accept={acceptedFormats.join(',')}
                         onChange={handleFileChange}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        className="upload-zone__input"
                         aria-label="Upload file"
                         disabled={isLoading}
                     />
-                    <div className="space-y-4">
-                        <UploadCloud
-                            className={cn(
-                                "mx-auto h-12 w-12",
-                                dragActive
-                                    ? "text-primary"
-                                    : error
-                                        ? "text-destructive"
-                                        : "text-muted-foreground"
-                            )}
-                        />
-                        {isLoading ? (
-                            <div className="space-y-2">
-                                <p className="text-sm text-muted-foreground">Processing...</p>
-                                <Progress value={100} className="w-full" />
-                            </div>
-                        ) : (
-                            <div className="text-muted-foreground">
-                                {selectedFile ? (
-                                    <div className="space-y-2">
-                                        <p className="text-primary font-medium">
-                                            {selectedFile.name}
-                                        </p>
-                                        <p className="text-sm text-muted-foreground">
-                                            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <p className="font-medium">
-                                            Drag and drop your image here
-                                        </p>
-                                        <p className="text-sm">or</p>
-                                        <p className="text-primary font-medium">
-                                            Click to browse
-                                        </p>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                        {error && (
-                            <p className="text-sm text-destructive">{error}</p>
-                        )}
+                    <div className="upload-zone__content" onClick={handleZoneClick}>
+                        <Upload className="upload-zone__icon" />
+                        <h3 className="upload-zone__title">Drag & drop files here</h3>
+                        <p className="upload-zone__text">
+                            Or click to browse (max 2 files, up to 5MB each)
+                        </p>
+                        <button type="button" className="upload-zone__browse">
+                            Browse files
+                        </button>
                     </div>
                 </div>
             </CardContent>

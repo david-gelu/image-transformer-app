@@ -8,23 +8,23 @@ interface ImageTransformProps {
 
 const ImageTransform: React.FC<ImageTransformProps> = ({ transformedImage, onDownload }) => {
     return (
-        <div className="space-y-4">
+        <div className="image-transform">
             {transformedImage ? (
-                <div className="space-y-4">
+                <div className="image-transform__content">
                     <img
                         src={transformedImage}
                         alt="Transformed"
-                        className="w-full rounded-lg shadow-md"
+                        className="image-transform__image"
                     />
                     <Button
                         onClick={onDownload}
-                        className="w-full"
+                        className="image-transform__button"
                     >
                         Download Image
                     </Button>
                 </div>
             ) : (
-                <p className="text-muted-foreground text-center py-8">
+                <p className="image-transform__placeholder">
                     Click "Convert Image" to see the result
                 </p>
             )}

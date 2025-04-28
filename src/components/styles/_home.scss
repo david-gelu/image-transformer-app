@@ -1,0 +1,43 @@
+.home {
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: var(--background);
+
+  &__container {
+    max-width: 64rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__dimensions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  &__convert-button {
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+}

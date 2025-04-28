@@ -1,0 +1,27 @@
+.image-transform {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__image {
+    width: 100%;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  &__button {
+    width: 100%;
+  }
+
+  &__placeholder {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--muted-foreground);
+  }
+}

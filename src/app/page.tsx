@@ -66,19 +66,27 @@ export default function Home() {
     }
   };
 
+  const handleClose = () => {
+    setSelectedImage(null);
+    setTransformedImage(null);
+  };
+
   return (
-    <main className="min-h-screen p-8 bg-background">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <ImageUpload onImageSelect={handleImageSelect} />
+    <main className="home">
+      <div className="home__container">
+        <ImageUpload
+          onImageSelect={handleImageSelect}
+          onClose={handleClose}
+        />
         {selectedImage && (
-          <div className="space-y-6">
+          <div className="home__options">
             <Card>
               <CardHeader>
                 <CardTitle>Conversion Options</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
+                <div className="home__grid">
+                  <div className="home__field">
                     <Label htmlFor="format">Format</Label>
                     <Select
                       value={conversionOptions.format}
@@ -98,7 +106,7 @@ export default function Home() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  <div className="home__field">
                     <Label htmlFor="quality">Quality ({conversionOptions.quality}%)</Label>
                     <Slider
                       id="quality"
@@ -112,8 +120,8 @@ export default function Home() {
                       })}
                     />
                   </div>
-                  <div className="w-full flex wrap gap-6">
-                    <div className="space-y-2">
+                  <div className="home__dimensions">
+                    <div className="home__field">
                       <Label htmlFor="width">Width (pixels)</Label>
                       <Input
                         id="width"
@@ -126,7 +134,7 @@ export default function Home() {
                         placeholder="Width in pixels"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="home__field">
                       <Label htmlFor="height">Height (pixels)</Label>
                       <Input
                         id="height"
@@ -142,7 +150,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Button
-                  className="mt-6 w-full"
+                  className="home__convert-button"
                   onClick={handleConvert}
                 >
                   Convert Image
