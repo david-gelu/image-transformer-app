@@ -15,11 +15,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <header className="header">
-            <div className="container">
-              <div className="header__content">
-                <h1>Image Transformer</h1>
-                <ThemeToggle />
-              </div>
+            <div className="header__content">
+              <h1>Image Transformer</h1>
+              <ThemeToggle />
             </div>
           </header>
           <main className="container">

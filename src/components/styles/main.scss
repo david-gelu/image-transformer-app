@@ -7,6 +7,7 @@
 @import "./slider";
 @import "./theme-toggle";
 @import "./image-transform";
+@import "./image-upload";
 @import "./home";
 
 *,
@@ -18,17 +19,18 @@
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg-color);
+  color: var(--text-color);
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
+  min-height: 100vh;
+  padding: 1rem;
 }
 
 .container {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1rem;
 }

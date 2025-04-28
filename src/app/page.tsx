@@ -157,17 +157,18 @@ export default function Home() {
                 </Button>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Result</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ImageTransform
-                  transformedImage={transformedImage}
-                  onDownload={handleDownload}
-                />
-              </CardContent>
-            </Card>
+            {transformedImage && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Result</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ImageTransform
+                    transformedImage={transformedImage}
+                    onDownload={handleDownload}
+                  />
+                </CardContent>
+              </Card>)}
           </div>
         )}
       </div>

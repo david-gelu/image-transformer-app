@@ -1,6 +1,9 @@
 import React, { useRef } from 'react';
 import { Upload, X } from "lucide-react";
 import { Card, CardContent } from './ui/card';
+import { Progress } from "@/components/ui/progress";
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 interface ImageUploadProps {
     onImageSelect: (file: File) => Promise<void>;
@@ -85,22 +88,73 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         fileInputRef.current?.click();
     };
 
+    const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className="upload-zone__content">
+                    <Upload className="upload-zone__icon" />
+                    <h3 className="upload-zone__title">Processing image...</h3>
+                    <div className="upload-zone__progress">
+                        <Progress
+                            value={100}
+                            indeterminate
+                            className="upload-zone__progress-bar"
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        if (selectedFile && !error) {
+            return (
+                <div className="upload-zone__content">
+                    <Upload className="upload-zone__icon" />
+                    <h3 className="upload-zone__title">Upload complete!</h3>
+                    <p className="upload-zone__text">
+                        {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                    </p>
+                    <Progress
+                        value={100}
+                        className="upload-zone__progress-bar"
+                    />
+                </div>
+            );
+        }
+
+        return (
+            <div className="upload-zone__content" onClick={handleZoneClick}>
+                <Upload className="upload-zone__icon" />
+                <h3 className="upload-zone__title">Drag & drop files here</h3>
+                <p className="upload-zone__text">
+                    Or click to browse (max 2 files, up to 5MB each)
+                </p>
+            </div>
+        );
+    };
+
     return (
         <Card className="upload">
+            <Input
+                ref={fileInputRef}
+                type="file"
+                accept={acceptedFormats.join(',')}
+                onChange={handleFileChange}
+                className="upload-zone__input"
+                aria-label="Upload file"
+                disabled={isLoading}
+                tabIndex={-1}
+            />
             <div className="upload-header">
-                <h2 className="upload-header__title">Basic</h2>
-                <button
-                    className="upload-header__close"
+                <h2 className="upload-header__title">Upload image</h2>
+                <Button
+                    className="upload-__close"
                     onClick={handleCloseClick}
                     type="button"
                     aria-label="Close upload"
                 >
                     <X size={20} />
-                </button>
+                </Button>
             </div>
-            <p className="upload-subtitle">
-                Basic controlled file upload.
-            </p>
             <CardContent className="p-0">
                 <div
                     className={`upload-zone ${dragActive ? 'upload-zone--active' :
@@ -111,25 +165,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                 >
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept={acceptedFormats.join(',')}
-                        onChange={handleFileChange}
-                        className="upload-zone__input"
-                        aria-label="Upload file"
-                        disabled={isLoading}
-                    />
-                    <div className="upload-zone__content" onClick={handleZoneClick}>
-                        <Upload className="upload-zone__icon" />
-                        <h3 className="upload-zone__title">Drag & drop files here</h3>
-                        <p className="upload-zone__text">
-                            Or click to browse (max 2 files, up to 5MB each)
-                        </p>
-                        <button type="button" className="upload-zone__browse">
-                            Browse files
-                        </button>
-                    </div>
+                    {renderContent()}
                 </div>
             </CardContent>
         </Card>
