@@ -6,7 +6,6 @@ export interface ImageConversionOptions {
 }
 
 export const getImageFormat = async (file: File): Promise<string> => {
-    // We'll use file extension as a fallback
     const extension = file.name.split('.').pop()?.toLowerCase() || 'unknown'
     return extension
 }
@@ -32,5 +31,5 @@ export const convertImage = async (
     }
 
     const result = await response.json()
-    return result.data
+    return result.data.replace(/^data:image\/(.*?)(?<!;)(base64,)/, 'data:image/$1;$2')
 }

@@ -22,13 +22,13 @@ import { getImageDimensions } from '@/utils/imageUtils'
 import { Progress } from '@/components/ui/progress'
 import { AlertCircle } from "lucide-react"
 import { BallLoader } from "@/components/ui/loader"
+import useImageMetadata from '@/hooks/useImageMetadata '
 
 const estimateConversionTime = (file: File) => {
   const sizeInMB = file.size / (1024 * 1024)
-  // Base time of 1 second + 0.5 seconds per MB
   return Math.max(1, Math.ceil(1 + (sizeInMB * 0.5)))
 }
-const MotionCard = motion(Card)
+const MotionCard = motion.create(Card)
 const MotionProgress = motion.div
 
 export default function Home() {
@@ -46,17 +46,16 @@ export default function Home() {
   const [progress, setProgress] = useState(0)
   const [estimatedTime, setEstimatedTime] = useState(0)
   const [error, setError] = useState<string | null>(null)
-
+  const metadata = useImageMetadata(transformedImage)
   useEffect(() => {
     let timer: NodeJS.Timeout
 
     if (isConverting) {
       setProgress(0)
-      setEstimatedTime(3) // 3 seconds estimated time
 
       timer = setInterval(() => {
         setProgress(prev => {
-          const newProgress = prev + (100 / (estimatedTime * 10)) // Update 10 times per second
+          const newProgress = prev + (100 / (estimatedTime * 10))
           return newProgress > 100 ? 100 : newProgress
         })
       }, 100)
@@ -71,7 +70,6 @@ export default function Home() {
   const handleAspectRatioChange = (checked: boolean) => {
     setKeepAspectRatio(checked)
     if (checked && selectedImage) {
-      // Maintain aspect ratio when changing dimensions
       const img = new Image()
       img.src = URL.createObjectURL(selectedImage)
       img.onload = () => {
@@ -90,7 +88,6 @@ export default function Home() {
     const format = await getImageFormat(file)
     setOriginalFormat(format)
 
-    // Get and set image dimensions
     const dimensions = await getImageDimensions(file)
     setConversionOptions(prev => ({
       ...prev,
@@ -100,7 +97,7 @@ export default function Home() {
   }
 
   const validateDimensions = (width?: number, height?: number) => {
-    const MAX_DIMENSION = 12000 // Maximum allowed dimension
+    const MAX_DIMENSION = 12000
     if (width && width > MAX_DIMENSION) {
       throw new Error(`Width cannot exceed ${MAX_DIMENSION} pixels`)
     }
@@ -113,25 +110,19 @@ export default function Home() {
     if (selectedImage) {
       try {
         setError(null)
+        const estimated = estimateConversionTime(selectedImage)
+        setEstimatedTime(estimated)
         setIsConverting(true)
         setProgress(0)
-
-        // Validate dimensions before converting
         validateDimensions(conversionOptions.width, conversionOptions.height)
-
-        // Start progress animation
         const progressInterval = setInterval(() => {
           setProgress(prev => {
             const newProgress = prev + 1
             return newProgress < 95 ? newProgress : 95
           })
         }, 50)
-
-        // Perform conversion
         const converted = await convertImage(selectedImage, conversionOptions)
         setTransformedImage(converted)
-
-        // Complete progress
         setProgress(100)
         clearInterval(progressInterval)
 
@@ -142,7 +133,7 @@ export default function Home() {
         setTimeout(() => {
           setIsConverting(false)
           setProgress(0)
-        }, 500) // Give time for completion animation
+        }, 500)
       }
     }
   }
@@ -164,7 +155,6 @@ export default function Home() {
   }
 
   const handleWidthChange = (width: number) => {
-    // Allow empty or zero values
     if (isNaN(width)) {
       setConversionOptions(prev => ({ ...prev, width: undefined }))
       return
@@ -180,7 +170,7 @@ export default function Home() {
           width,
           height: width ? Math.round(width / ratio) : undefined
         }))
-        URL.revokeObjectURL(img.src) // Clean up the object URL
+        URL.revokeObjectURL(img.src)
       }
     } else {
       setConversionOptions(prev => ({ ...prev, width }))
@@ -188,7 +178,6 @@ export default function Home() {
   }
 
   const handleHeightChange = (height: number) => {
-    // Allow empty or zero values
     if (isNaN(height)) {
       setConversionOptions(prev => ({ ...prev, height: undefined }))
       return
@@ -204,7 +193,7 @@ export default function Home() {
           width: height ? Math.round(height * ratio) : undefined,
           height
         }))
-        URL.revokeObjectURL(img.src) // Clean up the object URL
+        URL.revokeObjectURL(img.src)
       }
     } else {
       setConversionOptions(prev => ({ ...prev, height }))
@@ -390,20 +379,27 @@ export default function Home() {
               <AnimatePresence>
                 {transformedImage && (
                   <MotionCard
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    transition={{ delay: 0.3 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.3 }}
                   >
                     <CardHeader>
                       <CardTitle>Result</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent style={{ alignItems: 'center' }}>
+
                       <ImageTransform
                         transformedImage={transformedImage}
                         onDownload={handleDownload}
-                      />
+                      /> {metadata && (
+                        <div className="home-image__info">
+                          <div><strong>Format:</strong>{metadata.format}</div>
+                          <div><strong>Width:</strong> {metadata.width}px</div>
+                          <div><strong>Height:</strong> {metadata.height}px</div>
+                          <div><strong>Size:</strong> {metadata.sizeKB} KB</div>
+                        </div>
+                      )}
                     </CardContent>
                   </MotionCard>
                 )}
